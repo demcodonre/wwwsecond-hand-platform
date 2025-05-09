@@ -4,6 +4,7 @@ const path = require('path');
 const { promisify } = require('util');
 const writeFile = promisify(fs.writeFile);
 const unlink = promisify(fs.unlink);
+
 const validateUpdateFields = (data) => {
   const errors = {};
   
@@ -22,7 +23,7 @@ const validateUpdateFields = (data) => {
   return Object.keys(errors).length === 0 ? null : errors;
 };
 
-// 更新用户信息方法修改
+// 更新用户信息方法
 exports.updateProfile = async (req, res) => {
   try {
     const { nickname, qq, email } = req.body;

@@ -4,7 +4,6 @@ const cors = require('cors');
 const path = require('path');
 
 const userRoutes = require('./routes/users');
-const postRoutes = require('./routes/posts');
 const authRoutes = require('./routes/auth');
 const authMiddleware = require('./middleware/auth');
 const productRouter = require('./routes/product');
@@ -23,10 +22,10 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // 路由
 app.use('/api/auth', authRoutes);
 app.use('/api/user', authMiddleware, userRoutes);
-app.use('/api/user/posts', authMiddleware, postRoutes);
 app.use('/api/products', productRouter);
 app.use('/api/upload', uploadRouter);
 app.use('/api/admin', require('./routes/admin'));
+
 // 错误处理
 app.use((err, req, res, next) => {
   console.error(err.stack);

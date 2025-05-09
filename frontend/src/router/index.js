@@ -22,8 +22,8 @@ const router = createRouter({
     {
       path: '/profile',
       name: 'profile',
-      component: ProfilePage, // 个人中心页
-      meta: { requiresAuth: true } // 需要登录
+      component: ProfilePage, 
+      meta: { requiresAuth: true } 
     },
     {
       path: '/register',
@@ -41,7 +41,7 @@ const router = createRouter({
       path: '/admin',
       name: 'admin',
       component: AdminPage,
-      meta: { requiresAuth: true, requiresAdmin: true } // 添加 requiresAdmin 元字段
+      meta: { requiresAuth: true, requiresAdmin: true } 
     }
   ]
 })

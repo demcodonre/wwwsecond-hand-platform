@@ -7,7 +7,7 @@ const multer = require('multer');
 // 配置文件上传
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/avatars');
+    cb(null, path.join(__dirname, '../uploads/avatars'));
   },
   filename: (req, file, cb) => {
     const ext = file.originalname.split('.').pop();
@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
   storage,
-  limits: { fileSize: 2 * 1024 * 1024 }, // 限制2MB
+  limits: { fileSize: 2 * 1024 * 1024 }, 
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) {
       cb(null, true);

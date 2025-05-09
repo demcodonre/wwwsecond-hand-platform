@@ -13,7 +13,7 @@ export const useUserStore = defineStore('user', () => {
     nickname: '昵称',
     qq: '',
     email: '',
-    role: 'user', // 添加角色字段
+    role: 'user', 
     createdAt: null
   })
 
@@ -30,7 +30,7 @@ export const useUserStore = defineStore('user', () => {
       nickname: info.nickname || '新用户',
       qq: info.qq || '',
       email: info.email || '',
-      role: info.role || 'user', // 添加角色
+      role: info.role || 'user', 
       createdAt: info.createdAt || null
     }
     isAuthenticated.value = true
@@ -51,7 +51,7 @@ export const useUserStore = defineStore('user', () => {
       return false
     } catch (error) {
       console.error('更新用户信息失败:', error)
-      throw error // 抛出错误让调用方处理
+      throw error 
     } finally {
       isLoading.value = false
     }
@@ -80,7 +80,7 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  // 退出登录（增强版）
+  // 退出登录
   const logout = async (options = {}) => {
     const {
       silent = false,       // 是否静默退出（不显示消息）
@@ -88,7 +88,7 @@ export const useUserStore = defineStore('user', () => {
     } = options
 
     try {
-      // 调用后端退出接口（如果有）
+      // 调用后端退出接口
       await axios.post('/auth/logout')
     } catch (error) {
       if (!silent) {

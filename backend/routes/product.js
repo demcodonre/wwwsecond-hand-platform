@@ -4,10 +4,9 @@ const path = require('path');
 const fs = require('fs');
 const auth = require('../middleware/auth');
 const Product = require('../models/Product');
-const upload = require('../utils/upload');
 const User = require('../models/User');
 
-// 创建商品
+// 创建物品
 router.post('/', auth, async (req, res) => {
   try {
     const { title, description, price, category, contact, images } = req.body;
@@ -23,19 +22,19 @@ router.post('/', auth, async (req, res) => {
       price: parseFloat(price),
       category,
       contact,
-      images: Array.isArray(images) ? images : [images], // 兼容单张图片
+      images: Array.isArray(images) ? images : [images], 
       owner: req.user.id
     });
 
     await product.save();
-    res.status(201).json({ code: 201, message: '商品发布成功', data: product });
+    res.status(201).json({ code: 201, message: '物品发布成功', data: product });
   } catch (error) {
-    console.error('商品创建错误:', error);
+    console.error('物品创建错误:', error);
     res.status(500).json({ code: 500, message: error.message });
   }
 });
 
-// 获取所有商品
+// 获取所有物品
 router.get('/', async (req, res) => {
   try {
     const products = await Product.find()
@@ -47,16 +46,16 @@ router.get('/', async (req, res) => {
       data: products
     })
   } catch (error) {
-    console.error('获取商品列表失败:', error)
+    console.error('获取物品列表失败:', error)
     res.status(500).json({
       code: 500,
-      message: '获取商品列表失败'
+      message: '获取物品列表失败'
     })
   }
 });
 
 
-// 获取当前用户商品 
+// 获取当前用户物品 
 router.get('/my', auth, async (req, res) => {
   try {
     const products = await Product.find({ owner: req.user.id })
@@ -74,17 +73,17 @@ router.get('/my', auth, async (req, res) => {
 
     res.json({ code: 200, data: result, count: result.length });
   } catch (error) {
-    console.error('获取用户商品失败:', error);
+    console.error('获取用户物品失败:', error);
     res.status(500).json({ 
       code: 500,
-      message: '获取商品失败',
+      message: '获取物品失败',
       details: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 });
 
 
-// 获取单个商品详情
+// 获取单个物品详情
 router.get('/:id', async (req, res) => {
   try {
     const product = await Product.findById(req.params.id)
@@ -94,7 +93,7 @@ router.get('/:id', async (req, res) => {
     if (!product) {
       return res.status(404).json({
         code: 404,
-        message: '商品未找到'
+        message: '物品未找到'
       });
     }
 
@@ -106,16 +105,16 @@ router.get('/:id', async (req, res) => {
       data: product
     });
   } catch (error) {
-    console.error('获取商品详情失败:', error);
+    console.error('获取物品详情失败:', error);
     res.status(500).json({
       code: 500,
-      message: '获取商品详情失败'
+      message: '获取物品详情失败'
     });
   }
 });
 
 
-// 更新商品 (增强版)
+// 更新物品 
 router.put('/:id', auth, async (req, res) => {
   try {
     const updates = Object.keys(req.body);
@@ -138,7 +137,7 @@ router.put('/:id', auth, async (req, res) => {
     if (!product) {
       return res.status(404).json({
         code: 404,
-        message: '商品未找到或无权操作'
+        message: '物品未找到或无权操作'
       });
     }
     
@@ -159,7 +158,7 @@ router.put('/:id', auth, async (req, res) => {
     
     res.json({
       code: 200,
-      message: '商品更新成功',
+      message: '物品更新成功',
       data: {
         id: product._id,
         title: product.title,
@@ -168,56 +167,30 @@ router.put('/:id', auth, async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('更新商品失败:', error);
+    console.error('更新物品失败:', error);
     res.status(500).json({
       code: 500,
-      message: '更新商品失败',
+      message: '更新物品失败',
       details: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 });
 
-router.get('/:id', async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id)
-      .populate('owner', 'username avatar')
-      .lean();
 
-    if (!product) {
-      return res.status(404).json({
-        code: 404,
-        message: '商品未找到'
-      });
-    }
-
-    res.json({
-      code: 200,
-      data: product
-    });
-  } catch (error) {
-    console.error('获取商品详情失败:', error);
-    res.status(500).json({
-      code: 500,
-      message: '获取商品详情失败'
-    });
-  }
-});
-
-// 删除商品 (修改后的版本)
+// 删除物品 
 router.delete('/:id', auth, async (req, res) => {
   try {
     let product;
     
     // 检查是否是管理员
-    const User = require('../models/User');
     const user = await User.findById(req.user.id);
     const isAdmin = user && user.role === 'admin';
     
     if (isAdmin) {
-      // 管理员可以删除任何商品
+      // 管理员可以删除任何物品
       product = await Product.findByIdAndDelete(req.params.id);
     } else {
-      // 普通用户只能删除自己的商品
+      // 普通用户只能删除自己的物品
       product = await Product.findOneAndDelete({
         _id: req.params.id,
         owner: req.user.id
@@ -227,11 +200,11 @@ router.delete('/:id', auth, async (req, res) => {
     if (!product) {
       return res.status(404).json({
         code: 404,
-        message: '商品未找到或无权操作'
+        message: '物品未找到或无权操作'
       });
     }
     
-    // 从用户的商品列表中移除
+    // 从用户的物品列表中移除
     await User.findByIdAndUpdate(product.owner, {
       $pull: { products: product._id }
     });
@@ -253,14 +226,14 @@ router.delete('/:id', auth, async (req, res) => {
     
     res.json({
       code: 200,
-      message: '商品删除成功',
+      message: '物品删除成功',
       deletedId: product._id
     });
   } catch (error) {
-    console.error('删除商品失败:', error);
+    console.error('删除物品失败:', error);
     res.status(500).json({
       code: 500,
-      message: '删除商品失败',
+      message: '删除物品失败',
       details: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }

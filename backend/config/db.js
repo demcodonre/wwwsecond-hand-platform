@@ -1,9 +1,9 @@
-require('dotenv').config(); // 在第一行添加这行
+require('dotenv').config(); 
 const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    console.log('Connecting to MongoDB with URI:', process.env.MONGO_URI); // 调试日志
+    console.log('Connecting to MongoDB with URI:', process.env.MONGO_URI); 
     await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,

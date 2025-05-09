@@ -1,5 +1,4 @@
 const { Post } = require('../models');
-const { User } = require('../models');
 
 // 获取用户发布的帖子
 exports.getUserPosts = async (req, res) => {
