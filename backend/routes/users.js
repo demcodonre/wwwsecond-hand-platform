@@ -36,4 +36,7 @@ router.put('/profile', auth, userController.updateProfile);
 // 上传头像
 router.post('/avatar', auth, upload.single('avatar'), userController.uploadAvatar);
 
+// 修改密码
+router.patch('/password', auth, userController.changePassword);
+
 module.exports = router;

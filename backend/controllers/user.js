@@ -4,6 +4,7 @@ const path = require('path');
 const { promisify } = require('util');
 const writeFile = promisify(fs.writeFile);
 const unlink = promisify(fs.unlink);
+const bcrypt = require('bcryptjs');
 
 const validateUpdateFields = (data) => {
   const errors = {};
@@ -118,5 +119,28 @@ exports.uploadAvatar = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ code: 500, message: '上传头像失败' });
+  }
+};
+
+// 修改密码
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.user.id);
+    
+    // 验证旧密码
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ code: 400, message: '当前密码不正确' });
+    }
+    
+    // 更新密码
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+    
+    res.json({ code: 200, message: '密码修改成功' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ code: 500, message: '密码修改失败' });
   }
 };

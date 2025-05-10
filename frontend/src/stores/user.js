@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import axios from '@/utils/axios'
 import { useRouter } from 'vue-router'
 import { computed } from 'vue'
+import { ElMessage } from 'element-plus';
 
 export const useUserStore = defineStore('user', () => {
   const router = useRouter()
@@ -62,7 +63,7 @@ export const useUserStore = defineStore('user', () => {
     try {
       isLoading.value = true
       const response = await axios.get('/user/profile')
-      console.log('【调试】用户信息响应:', response.data)
+      console.log('调试用户信息响应:', response.data)
       if (response.code === 200) {
         setUserInfo(response.data)
         return true
@@ -70,7 +71,6 @@ export const useUserStore = defineStore('user', () => {
       return false
     } catch (error) {
       console.error('获取用户信息失败:', error)
-      // 如果 token 无效，自动退出
       if (error.response?.status === 401) {
         logout()
       }
@@ -114,6 +114,29 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  // changePassword
+const changePassword = async (passwordData) => {
+  try {
+    const response = await axios.patch('/user/password', {
+      oldPassword: passwordData.currentPassword,
+      newPassword: passwordData.newPassword
+    });
+    
+    if (response.code === 200) {
+      ElMessage.success(response.message || '密码修改成功');
+      return true;
+    }
+    return false;
+  } catch (error) {
+    let errorMessage = '密码修改失败';
+    if (error.response) {
+      errorMessage = error.response.data?.message || errorMessage;
+    }
+    ElMessage.error(errorMessage);
+    throw error;
+  }
+};
+
   return { 
     userInfo, 
     isAuthenticated,
@@ -122,6 +145,7 @@ export const useUserStore = defineStore('user', () => {
     setUserInfo,
     updateUserInfo,
     fetchUserInfo,
-    logout
+    logout,
+    changePassword
   }
 })

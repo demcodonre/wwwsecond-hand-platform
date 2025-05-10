@@ -82,7 +82,7 @@
     await userStore.setUserInfo(response.data.user)
     
     ElMessage.success('登录成功')
-    router.push('/profile') // 明确跳转到个人中心
+    router.push('/profile') 
   } catch (err) {
     let errorMessage = '登录失败'
     if (err.response) {

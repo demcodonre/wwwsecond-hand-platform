@@ -9,7 +9,7 @@ export const useProductStore = defineStore('product', () => {
   const error = ref(null);
   const currentProduct = ref(null);
   
-  // 获取商品列表
+  // 获取物品列表
   const fetchProducts = async () => {
     try {
       isLoading.value = true;
@@ -17,14 +17,14 @@ export const useProductStore = defineStore('product', () => {
       products.value = response.data.data || response.data;
     } catch (err) {
       error.value = err.message;
-      console.error('获取商品列表失败:', err);
+      console.error('获取物品列表失败:', err);
       throw err;
     } finally {
       isLoading.value = false;
     }
   };
   
-  // 获取当前用户商品
+  // 获取当前用户物品
 const fetchMyProducts = async () => {
   try {
     isLoading.value = true
@@ -32,18 +32,18 @@ const fetchMyProducts = async () => {
     // 确保数据中包含id字段
     myProducts.value = (response.data.data || response.data).map(product => ({
       ...product,
-      id: product._id || product.id // 确保有id字段
+      id: product._id || product.id 
     }))
   } catch (err) {
     error.value = err.message
-    console.error('获取我的商品失败:', err)
+    console.error('获取我的物品失败:', err)
     throw err
   } finally {
     isLoading.value = false
   }
 }
   
-  // 获取商品详情
+  // 获取物品详情
   const getProductDetail = async (id) => {
     try {
       isLoading.value = true;
@@ -52,14 +52,14 @@ const fetchMyProducts = async () => {
       return currentProduct.value;
     } catch (err) {
       error.value = err.message;
-      console.error('获取商品详情失败:', err);
+      console.error('获取物品详情失败:', err);
       throw err;
     } finally {
       isLoading.value = false;
     }
   };
 
-  // 获取单个商品详情
+  // 获取单个物品详情
 const fetchProductById = async (id) => {
   try {
     isLoading.value = true;
@@ -68,42 +68,42 @@ const fetchProductById = async (id) => {
     return response.data;
   } catch (err) {
     error.value = err.message;
-    console.error('获取商品详情失败:', err);
+    console.error('获取物品详情失败:', err);
     throw err;
   } finally {
     isLoading.value = false;
   }
 };
   
-  // 创建商品
+  // 创建物品
   const createProduct = async (postData) => {
     try {
       isLoading.value = true;
       const response = await axios.post('/products', postData);
-      await fetchMyProducts(); // 创建后刷新我的商品列表
+      await fetchMyProducts(); 
       return response.data;
     } catch (err) {
       error.value = err.message;
-      console.error('创建商品失败:', err);
+      console.error('创建物品失败:', err);
       throw err;
     } finally {
       isLoading.value = false;
     }
   };
   
-  // 更新商品
+  // 更新物品
   const updateProduct = async (id, updates) => {
     try {
       isLoading.value = true;
       const response = await axios.put(`/products/${id}`, updates);
       
-      // 更新本地商品列表
+      // 更新本地物品列表
       const index = myProducts.value.findIndex(p => p._id === id || p.id === id);
       if (index !== -1) {
         myProducts.value[index] = { ...myProducts.value[index], ...updates };
       }
       
-      // 如果当前查看的就是这个商品，也更新currentProduct
+      // 如果当前查看的就是这个物品，也更新currentProduct
       if (currentProduct.value && (currentProduct.value._id === id || currentProduct.value.id === id)) {
         currentProduct.value = { ...currentProduct.value, ...updates };
       }
@@ -111,7 +111,7 @@ const fetchProductById = async (id) => {
       return response.data;
     } catch (err) {
       error.value = err.message;
-      console.error('更新商品失败:', err);
+      console.error('更新物品失败:', err);
       throw err;
     } finally {
       isLoading.value = false;
@@ -119,7 +119,7 @@ const fetchProductById = async (id) => {
   };
   
 
-  // 删除商品
+  // 删除物品
 const deleteProduct = async (id) => {
   try {
     isLoading.value = true
@@ -128,13 +128,13 @@ const deleteProduct = async (id) => {
     // 从本地列表中移除
     myProducts.value = myProducts.value.filter(p => p._id !== id && p.id !== id)
     
-    // 如果当前查看的就是这个商品，清空currentProduct
+    // 如果当前查看的就是这个物品，清空currentProduct
     if (currentProduct.value && (currentProduct.value._id === id || currentProduct.value.id === id)) {
       currentProduct.value = null
     }
   } catch (err) {
     error.value = err.message
-    console.error('删除商品失败:', err)
+    console.error('删除物品失败:', err)
     throw err
   } finally {
     isLoading.value = false
@@ -150,7 +150,7 @@ const deleteProduct = async (id) => {
     error.value = null;
   };
 
-  // 获取商品分类选项
+  // 获取物品分类选项
 const getCategories = () => {
   return [
     { value: '物品/电子外设', label: '电子外设' },

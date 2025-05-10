@@ -14,7 +14,7 @@ import HomeBanner from '@/components/HomeBanner.vue'
 const categoryStore = useCategoryStore()
 
 onMounted(() => {
-  categoryStore.initFromRoute() // 从URL参数初始化分类
+  categoryStore.initFromRoute() 
 })
 </script>
 

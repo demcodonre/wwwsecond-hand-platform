@@ -1,7 +1,7 @@
 @import './base.css';
 
 #app {
-  min-width: 1200px; /* 添加最小宽度 */
+  min-width: 1200px; 
   margin: 0 auto;
   padding: 0;
   font-weight: normal;

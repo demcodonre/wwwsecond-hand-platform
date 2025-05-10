@@ -256,14 +256,6 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useProductStore } from '@/stores/product'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import {
-  User,
-  Edit,
-  Goods,
-  Setting,
-  SwitchButton,
-  Plus
-} from '@element-plus/icons-vue'
 import ProductPublishForm from '@/components/ProductPublishForm.vue'
 
 const router = useRouter()
@@ -300,6 +292,9 @@ const passwordForm = ref({
   newPassword: '',
   confirmPassword: ''
 })
+
+// 修改
+const passwordFormRef = ref(null);
 
 // 密码验证规则
 const passwordRules = {
@@ -571,17 +566,26 @@ const cancelEdit = () => {
 // 提交密码表单
 const submitPasswordForm = async () => {
   try {
-    // 这里调用API修改密码
-    ElMessage.success('密码修改成功')
+    // 先验证表单
+    await passwordFormRef.value.validate();
+    
+    // 调用store中的密码修改方法
+    await userStore.changePassword({
+      currentPassword: passwordForm.value.currentPassword,
+      newPassword: passwordForm.value.newPassword
+    });
+    
+    // 清空表单
     passwordForm.value = {
       currentPassword: '',
       newPassword: '',
       confirmPassword: ''
-    }
+    };
+    
   } catch (error) {
-    ElMessage.error(error.message || '密码修改失败')
+    console.error('密码修改出错:', error);
   }
-}
+};
 
 // 退出登录
 const handleLogout = async () => {
