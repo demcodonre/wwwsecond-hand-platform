@@ -111,7 +111,7 @@
           </el-card>
         </div>
 
-        <!-- 我的商品 -->
+        <!-- 我的物品 -->
         <div v-if="activeMenu === 'my-products'" class="my-products-content">
           <el-card>
             <template #header>
@@ -150,9 +150,9 @@
                   ref="passwordFormRef"
                   label-width="120px"
                 >
-                  <el-form-item label="当前密码" prop="currentPassword">
+                  <el-form-item label="当前密码" prop="oldPassword">
                     <el-input
-                      v-model="passwordForm.currentPassword"
+                      v-model="passwordForm.oldPassword"
                       type="password"
                       show-password
                     />
@@ -182,10 +182,10 @@
       </el-main>
     </el-container>
 
-    <!-- 商品发布表单 -->
+    <!-- 物品发布表单 -->
     <ProductPublishForm ref="publishForm" @success="handleProductSuccess" />
 
-    <!-- 商品编辑对话框 -->
+    <!-- 物品编辑对话框 -->
     <el-dialog
       v-model="editDialogVisible"
       title="编辑"
@@ -227,7 +227,7 @@
             <el-option label="已下架" value="removed" />
           </el-select>
         </el-form-item>
-        <el-form-item label="商品图片">
+        <el-form-item label="物品图片">
           <el-upload
             action="/api/upload"
             list-type="picture-card"
@@ -288,7 +288,7 @@ const userForm = ref({
 
 // 密码表单
 const passwordForm = ref({
-  currentPassword: '',
+  oldPassword: '',
   newPassword: '',
   confirmPassword: ''
 })
@@ -298,7 +298,7 @@ const passwordFormRef = ref(null);
 
 // 密码验证规则
 const passwordRules = {
-  currentPassword: [
+  oldPassword: [
     { required: true, message: '请输入当前密码', trigger: 'blur' }
   ],
   newPassword: [
@@ -320,7 +320,7 @@ const passwordRules = {
   ]
 }
 
-// 商品编辑相关
+// 物品编辑相关
 const productListRef = ref(null)
 const editDialogVisible = ref(false)
 const editFormRef = ref(null)
@@ -340,7 +340,7 @@ const fileList = ref([])
 
 const categories = computed(() => productStore.getCategories())
 
-// 商品表单验证规则
+// 物品表单验证规则
 const productRules = {
   title: [
     { required: true, message: '标题', trigger: 'blur' },
@@ -391,22 +391,22 @@ const handleMenuSelect = (index) => {
   activeMenu.value = index
 }
 
-// 处理发布商品
+// 处理发布物品
 const handlePublish = () => {
   publishForm.value?.open()
 }
 
-// 商品发布成功回调
+// 物品发布成功回调
 const handleProductSuccess = () => {
   if (activeMenu.value === 'my-products') {
     productListRef.value?.fetchProducts()
   }
 }
 
-// 处理编辑商品
+// 处理编辑物品
 const handleEditProduct = async (product) => {
   try {
-    // 获取商品详情
+    // 获取物品详情
     const response = await productStore.fetchProductDetail(product.id)
     const productDetail = response.data
     
@@ -436,7 +436,7 @@ const handleEditProduct = async (product) => {
   }
 }
 
-// 处理删除商品
+// 处理删除物品
 const handleDeleteProduct = async (productId) => {
   try {
     await ElMessageBox.confirm('确定要删除这个吗?', '提示', {
@@ -448,7 +448,7 @@ const handleDeleteProduct = async (productId) => {
     await productStore.deleteProduct(productId)
     ElMessage.success('删除成功')
     
-    // 刷新商品列表
+    // 刷新物品列表
     productListRef.value?.fetchProducts()
   } catch (error) {
     if (error !== 'cancel') {
@@ -477,7 +477,7 @@ const submitEditForm = async () => {
     ElMessage.success('更新成功')
     editDialogVisible.value = false
     
-    // 刷新商品列表
+    // 刷新物品列表
     productListRef.value?.fetchProducts()
   } catch (error) {
     if (error !== 'cancel') {
@@ -571,13 +571,13 @@ const submitPasswordForm = async () => {
     
     // 调用store中的密码修改方法
     await userStore.changePassword({
-      currentPassword: passwordForm.value.currentPassword,
+      oldPassword: passwordForm.value.oldPassword,
       newPassword: passwordForm.value.newPassword
     });
     
     // 清空表单
     passwordForm.value = {
-      currentPassword: '',
+      oldPassword: '',
       newPassword: '',
       confirmPassword: ''
     };

@@ -125,17 +125,23 @@ exports.uploadAvatar = async (req, res) => {
 // 修改密码
 exports.changePassword = async (req, res) => {
   try {
-    const { currentPassword, newPassword } = req.body;
-    const user = await User.findById(req.user.id);
+    const { oldPassword, newPassword } = req.body;
     
+    // 关键修改：显式包含password字段
+    const user = await User.findById(req.user.id).select('+password');
+    
+    if (!user) {
+      return res.status(404).json({ code: 404, message: '用户不存在' });
+    }
+
     // 验证旧密码
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
     if (!isMatch) {
       return res.status(400).json({ code: 400, message: '当前密码不正确' });
     }
     
     // 更新密码
-    user.password = await bcrypt.hash(newPassword, 10);
+    user.password = newPassword; 
     await user.save();
     
     res.json({ code: 200, message: '密码修改成功' });

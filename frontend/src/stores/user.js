@@ -118,7 +118,7 @@ export const useUserStore = defineStore('user', () => {
 const changePassword = async (passwordData) => {
   try {
     const response = await axios.patch('/user/password', {
-      oldPassword: passwordData.currentPassword,
+      oldPassword: passwordData.oldPassword,
       newPassword: passwordData.newPassword
     });
     

@@ -21,7 +21,7 @@
       </el-button>
     </div>
   
-    <!-- 商品列表 -->
+    <!-- 物品列表 -->
     <div v-if="filteredProducts.length > 0" class="product-grid">
       <el-row :gutter="20" justify="start" class="product-row">
         <el-col 
@@ -48,9 +48,9 @@
     </div>
   
     <!-- 空状态提示 -->
-    <el-empty v-else description="暂无商品" />
+    <el-empty v-else description="暂无物品" />
     
-    <!-- 商品发布表单 -->
+    <!-- 物品发布表单 -->
     <ProductPublishForm ref="publishForm" @success="fetchProducts" />
   </div>
 </template>
@@ -80,7 +80,6 @@ const route = useRoute()
 const categoryStore = useCategoryStore()
 const productStore = useProductStore()
 const publishForm = ref(null)
-
 const products = ref([])
 const isLoading = ref(true)
 
@@ -89,7 +88,7 @@ const activeSearch = computed(() => {
   return route.query.search || ''
 })
 
-// 获取商品数据
+// 获取物品数据
 const fetchProducts = async () => {
   try {
     isLoading.value = true
@@ -101,14 +100,14 @@ const fetchProducts = async () => {
       products.value = productStore.products
     }
   } catch (error) {
-    console.error('获取商品失败:', error)
-    ElMessage.error('获取商品失败')
+    console.error('获取物品失败:', error)
+    ElMessage.error('获取物品失败')
   } finally {
     isLoading.value = false
   }
 }
 
-// 计算属性：筛选后的商品列表
+// 计算属性：筛选后的物品列表
 const filteredProducts = computed(() => {
   let result = [...products.value]
   
@@ -132,15 +131,15 @@ const filteredProducts = computed(() => {
 })
 
 
-// 编辑商品
+// 编辑物品
 const handleEditProduct = (product) => {
   router.push(`/product/edit/${product.id}`)
 }
 
-// 删除商品
+// 删除物品
 const handleDeleteProduct = async (productId) => {
   try {
-    await ElMessageBox.confirm('确定要删除这个商品吗?', '提示', {
+    await ElMessageBox.confirm('确定要删除这个物品吗?', '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
@@ -151,7 +150,7 @@ const handleDeleteProduct = async (productId) => {
     ElMessage.success('删除成功')
   } catch (error) {
     if (error !== 'cancel') {
-      console.error('删除商品失败:', error)
+      console.error('删除物品失败:', error)
       ElMessage.error(`删除失败: ${error.message}`)
     }
   }
@@ -163,7 +162,7 @@ const clearFilter = () => {
   router.push({ path: '/home' })
 }
 
-// 打开发布商品表单
+// 打开发布物品表单
 const openPublishForm = () => {
   publishForm.value?.open()
 }
@@ -173,7 +172,7 @@ defineExpose({
   openPublishForm
 })
 
-// 初始化时获取商品数据
+// 初始化时获取物品数据
 onMounted(() => {
   fetchProducts()
 })

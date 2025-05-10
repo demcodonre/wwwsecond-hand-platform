@@ -40,7 +40,7 @@
       <div v-if="userStore.isAuthenticated" class="user-area">
         <el-dropdown @command="handleUserCommand">
           <div class="user-info">
-            <el-avatar :size="32" :src="userStore.userInfo.avatar" />
+            <el-avatar :size="32" :src="getFullAvatarUrl(userStore.userInfo.avatar)" />
             <span class="user-name">{{ userStore.userInfo.nickname }}</span>
           </div>
           <template #dropdown>
@@ -115,6 +115,7 @@
   const router = useRouter()
   const userStore = useUserStore()
   const categoryStore = useCategoryStore()
+  const fileBaseUrl = import.meta.env.VITE_FILE_BASE_URL
   // 分类数据
   const categories = ref([
 
@@ -168,6 +169,13 @@
   
   // 当前激活菜单
   const activeIndex = ref('')
+
+  // 获取完整头像URL
+const getFullAvatarUrl = (avatarPath) => {
+  if (!avatarPath) return ''
+  if (avatarPath.startsWith('http')) return avatarPath
+  return `${fileBaseUrl}${avatarPath.startsWith('/uploads') ? '' : '/uploads'}${avatarPath}`
+}
   
   // 响应式处理
   const isMobile = ref(false)

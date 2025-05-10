@@ -1,6 +1,5 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { Picture } from '@element-plus/icons-vue'
 import ProductDetailDialog from './ProductDetailDialog.vue'
@@ -35,12 +34,18 @@ const props = defineProps({
   }
 })
 
-const router = useRouter()
 const userStore = useUserStore()
 const detailDialog = ref(null)
 
 // 获取基础URL
 const fileBaseUrl = import.meta.env.VITE_FILE_BASE_URL
+
+// 获取完整头像URL
+const getFullAvatarUrl = (avatarPath) => {
+  if (!avatarPath) return ''
+  if (avatarPath.startsWith('http')) return avatarPath
+  return `${fileBaseUrl}${avatarPath.startsWith('/uploads') ? '' : '/uploads'}${avatarPath}`
+}
 
 // 高亮关键词
 const highlightedTitle = computed(() => {
@@ -69,28 +74,28 @@ const formattedDate = computed(() => {
   return date.toLocaleDateString()
 })
 
-// 显示商品详情弹窗
+// 显示物品详情弹窗
 const showDetail = () => {
   detailDialog.value?.open()
 }
 
-// 跳转到商品编辑页
-const handleEdit = (e) => {
-  e.stopPropagation()
-  router.push(`/product/edit/${props.product.id}`)
-}
+// // 跳转到物品编辑页
+// const handleEdit = (e) => {
+//   e.stopPropagation()
+//   router.push(`/product/edit/${props.product.id}`)
+// }
 
 const handleDelete = (e) => {
   e.stopPropagation()
   const productId = props.product._id || props.product.id
   if (!productId) {
-    console.error('无法获取商品ID', props.product)
+    console.error('无法获取物品ID', props.product)
     return
   }
   emit('delete', productId)
 }
 
-// 是否是当前用户的商品
+// 是否是当前用户的物品
 const isOwner = computed(() => {
   if (!userStore.isAuthenticated || !userStore.userInfo?.id || !props.product.owner) {
     return false
@@ -105,21 +110,12 @@ const isOwner = computed(() => {
 
 const emit = defineEmits(['edit', 'delete'])
 
-// 调试代码：添加到计算属性之后
-console.log('【调试】权限检查:', {
-  isOwner: isOwner.value,
-  isAuthenticated: userStore.isAuthenticated,
-  userId: userStore.userInfo?.id,
-  productOwnerId: props.product.owner?.id,
-  productId: props.product.id
-});
-
 </script>
 
 <template>
   <div>
   <el-card class="product-card" @click="showDetail">
-    <!-- 商品图片轮播 -->
+    <!-- 物品图片轮播 -->
     <el-carousel 
       v-if="product.images && product.images.length > 0" 
       :interval="4000" 
@@ -139,7 +135,7 @@ console.log('【调试】权限检查:', {
       <span>暂无图片</span>
     </div>
 
-    <!-- 商品信息 -->
+    <!-- 物品信息 -->
     <template #header>
       <div class="card-header">
         <div class="product-info">
@@ -158,22 +154,25 @@ console.log('【调试】权限检查:', {
       
       <!-- 卖家信息 -->
       <div class="product-owner">
-        <el-avatar :size="24" :src="product.owner?.avatar" />
-        <span class="owner-name">{{ product.owner?.username }}</span>
-      </div>
+    <el-avatar 
+      :size="24" 
+      :src="getFullAvatarUrl(product.owner?.avatar)" 
+    />
+    <span class="owner-name">{{ product.owner?.username }}</span>
+  </div>
     </div>
 
-    <!-- 操作按钮 (如果是自己的商品) -->
+    <!-- 操作按钮  -->
     <template v-if="showActions && isOwner" #footer>
   <div class="product-actions">
-    <el-button size="small" @click.stop="handleEdit">编辑</el-button>
+    <!-- <el-button size="small" @click.stop="handleEdit">编辑</el-button> -->
     <el-button size="small" type="danger" @click.stop="handleDelete">
       删除
     </el-button>
   </div>
 </template>
 
-    <!-- 商品详情弹窗 -->
+    <!-- 物品详情弹窗 -->
     <ProductDetailDialog ref="detailDialog" :product="product" />
   </el-card>
   <ProductDetailDialog ref="detailDialog" :product="product" />

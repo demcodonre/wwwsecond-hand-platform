@@ -40,7 +40,6 @@
   import { ref, watch } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useCategoryStore } from '@/stores/category'
 import { debounce } from 'lodash-es'
 
 const props = defineProps({
@@ -52,7 +51,6 @@ const props = defineProps({
 
 const router = useRouter()
 const route = useRoute()
-// const categoryStore = useCategoryStore()
 const searchQuery = ref('')
 const selectedCategory = ref('')
 
